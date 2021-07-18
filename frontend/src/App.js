@@ -16,29 +16,44 @@ import Agent from './components/agent';
 import Conseil from './components/conseil';
 import Prefooter from './components/prefooter';
 import Footer from './components/footer';
+import View from './components/view';
 
 import React from 'react';
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 export default class App extends React.Component{
 
   render(){
   return (
-    <div className="App">        
-        <Navbar/>
-        <Slider/>
-        <Card />
-        <Search />
-        <Feature />
-       <br/>
-       <br/>
-       <br/>
-      <Agent />
-      <Conseil />
-      <Prefooter/>
-      <Footer/>
-    </div>
+    <Router>
+      <div className="App">        
+          <Navbar/>
+          <Switch>
+            <Route path="/" exact>  
+              <Slider/>
+              <Card />
+              <Search />
+              <Feature />
+              <br/>
+              <br/>
+              <br/>
+              <Agent />
+              <Conseil />
+              <Prefooter/>
+            </Route>
+            <Route path="/view" exact>
+              <View />
+            </Route>
+        </Switch>
+        <Footer/>
+      </div>
+    </Router>
   );
   }
 }
-
-
