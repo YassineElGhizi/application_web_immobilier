@@ -1,5 +1,9 @@
 import React from 'react';
 import {Link} from "react-router-dom";
+import axios from 'axios';
+import {
+    Redirect,
+  } from "react-router-dom";
 
 export default class Login extends  React.Component
 {
@@ -8,6 +12,7 @@ export default class Login extends  React.Component
         this.state = {
             Email : "",
             password : "",
+            role : ""
         };
     }
 
@@ -16,8 +21,45 @@ export default class Login extends  React.Component
         p===0? this.setState({Email : e.target.value}) : this.setState({password : e.target.value})
     }
 
+    click = (e) => 
+    {
+        e.preventDefault();
+        let scoreCalculator = () =>
+        {
+            let score = 0
+            this.state.Email.includes("@") ? score += 1 : score += 0
+            this.state.password.length > 8 ? score += 1 : score += 0
+            return score
+        }
+        let sendRequest = () =>
+        {
+            const mythis = this;
+            axios.post('http://127.0.0.1:8000/loginUser', {
+                email: this.state.Email,
+                password : this.state.password,
+              })
+              .then(function (response) {
+                console.log(response.data);
+                mythis.setState({role : response.data}) 
+              })
+              .catch(function (error) {
+                alert(error);
+              });
+        }
+        scoreCalculator() === 2 ? sendRequest() : alert('SomeThing Missing !!')
+    }
+
     render()
     {
+        if(this.state.role === 1) 
+        {
+            this.props.updateAuthorization(this.state.role);
+            return <Redirect to="/admin" />;
+        }else if (this.state.role === 2)
+        {
+            this.props.updateAuthorization(this.state.role);
+            return <Redirect to="/publisher" />;
+        }
         return(
             <div>
                 <div className="wrap-bg-logreg" style={{'marginLeft' : '10%'}}>
@@ -71,7 +113,7 @@ export default class Login extends  React.Component
                                         </div>
                                         <div className="clearfix">
                                         </div>
-                                        <button className="btn button-md button-theme btn-block" type="submit">
+                                        <button onClick={this.click} className="btn button-md button-theme btn-block" type="submit">
                                         <i className="fa fa-user-plus">
                                         </i>
                                         Sign in

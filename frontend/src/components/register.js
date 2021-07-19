@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 export default class Register extends React.Component
 {
@@ -71,7 +72,19 @@ export default class Register extends React.Component
         }
         let sendRequest = () =>
         {
-            console.log(this.state)
+            // console.log(this.state)
+            axios.post('http://127.0.0.1:8000/registerUser', {
+                name: this.state.name,
+                email: this.state.email,
+                password : this.state.password,
+                tel: this.state.Tel
+              })
+              .then(function (response) {
+                console.log(response);
+              })
+              .catch(function (error) {
+                alert(error);
+              });
         }
         scoreCalculator() === 5 ? sendRequest() : alert('SomeThing Missing !!')
 

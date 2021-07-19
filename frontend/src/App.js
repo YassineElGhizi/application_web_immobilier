@@ -19,6 +19,8 @@ import Footer from './components/footer';
 import View from './components/view';
 import Login from './components/login';
 import Register from './components/register';
+import Admin from './components/admin';
+import Publisher from './components/publisher';
 
 import React from 'react';
 
@@ -30,6 +32,17 @@ import {
 } from "react-router-dom";
 
 export default class App extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+        authorized : 0,
+    };
+  }
+
+    updateAuthorization = (n) => 
+    {
+      this.setState({authorized : n});
+    }
 
   render(){
   return (
@@ -53,10 +66,16 @@ export default class App extends React.Component{
               <View />
             </Route>
             <Route path="/login" exact>
-              <Login />
+              <Login updateAuthorization={this.updateAuthorization}/>
             </Route>
             <Route path="/register" exact>
               <Register />
+            </Route>
+            <Route path="/admin" exact>
+              <Admin authorized={this.state.authorized}/>
+            </Route>
+            <Route path="/publisher" exact>
+              <Publisher authorized={this.state.authorized}/>
             </Route>
         </Switch>
         <Footer/>

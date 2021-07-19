@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
         DB::table('users')->insert([
             'name' => Str::random(0).'admin',
             'email' => Str::random(0).'admin@admin.com',
-            'password' => Hash::make('admin'),
+            // 'password' => bcrypt('adminadmin'),
+            'password' => '$2y$10$9MM0/pATdW/73BE.xcTugOQ2jeZHYVGafu2H4ZE5oECSeGIMxkvdK',
             'tel' => '00000000',
             'role_id' => '1'
         ]);
