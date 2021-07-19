@@ -12,8 +12,7 @@ export default class Search extends React.Component{
             chambre : "",
             saleBains : "",
             min : "",
-            max: ""
-
+            max: "",
         };
     }
 

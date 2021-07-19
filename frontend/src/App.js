@@ -17,6 +17,8 @@ import Conseil from './components/conseil';
 import Prefooter from './components/prefooter';
 import Footer from './components/footer';
 import View from './components/view';
+import Login from './components/login';
+import Register from './components/register';
 
 import React from 'react';
 
@@ -49,6 +51,12 @@ export default class App extends React.Component{
             </Route>
             <Route path="/view" exact>
               <View />
+            </Route>
+            <Route path="/login" exact>
+              <Login />
+            </Route>
+            <Route path="/register" exact>
+              <Register />
             </Route>
         </Switch>
         <Footer/>

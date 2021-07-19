@@ -1,4 +1,6 @@
 import React from 'react';
+import {Link} from "react-router-dom";
+
 
 export default class Navbar extends React.Component
 {
@@ -95,14 +97,14 @@ export default class Navbar extends React.Component
                   </a>
                 </li>
                 <li>
-                  <a href="contact-us.html">
+                  <Link to="/login">
                     Sign in
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="contact-us.html">
+                  <Link  href="contact-us.html">
                     Contacter nous
-                  </a>
+                  </Link >
                 </li>
               </ul>
             </div>
