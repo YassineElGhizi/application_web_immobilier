@@ -22,6 +22,8 @@ import Register from './components/register';
 import Admin from './components/admin';
 import Publisher from './components/publisher';
 
+import axios from 'axios';
+
 import React from 'react';
 
 import {
@@ -36,12 +38,18 @@ export default class App extends React.Component{
     super(props);
     this.state = {
         authorized : 0,
+        id:""
     };
   }
 
     updateAuthorization = (n) => 
     {
       this.setState({authorized : n});
+    }
+    
+    getId = (id) =>
+    {
+      this.setState({id : id});
     }
 
   render(){
@@ -66,7 +74,7 @@ export default class App extends React.Component{
               <View />
             </Route>
             <Route path="/login" exact>
-              <Login updateAuthorization={this.updateAuthorization}/>
+              <Login updateAuthorization={this.updateAuthorization} getId={this.getId}/>
             </Route>
             <Route path="/register" exact>
               <Register />
@@ -75,7 +83,7 @@ export default class App extends React.Component{
               <Admin authorized={this.state.authorized}/>
             </Route>
             <Route path="/publisher" exact>
-              <Publisher authorized={this.state.authorized}/>
+              <Publisher authorized={this.state.authorized} id={this.state.id}/>
             </Route>
         </Switch>
         <Footer/>

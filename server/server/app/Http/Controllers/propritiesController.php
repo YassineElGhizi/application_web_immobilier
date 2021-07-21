@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Role;
-use Illuminate\Support\Facades\Hash;
-use DB;
+use App\Models\Facility;
+use App\Models\Property;
 
-class userController extends Controller
+class propritiesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +15,7 @@ class userController extends Controller
      */
     public function index()
     {
-        $name = User::where('id','1')->get();
-        return $name;
+        //
     }
 
     /**
@@ -27,35 +23,9 @@ class userController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-        // return $request->name;
-        return User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'tel' => $request->tel,
-            'role_id' => 2,
-        ]);
-    }
-
-    public function login(Request $request)
-    {
-        $id = User::select('id')->where('email', $request->email )->get();
-        $pass = DB::select('select password from users where id = ?',[$id[0]->id]);
-        if( Hash::check($request->password, $pass[0]->password) )
-        {
-            // return 1;
-            $roles = User::select('role_id')->where('id' , $id[0]->id)->get();
-            // return $roles[0]->role_id;
-            return response()->json([
-                'role' => $roles[0]->role_id,
-                'id' => $id[0]->id,
-            ]);
-        }else{
-            return 0;
-        }
-
+        //
     }
 
     /**
@@ -66,7 +36,28 @@ class userController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $f_id = Facility::create([
+        //     'room' => $request->chambre,
+        //     'garage' => $request->garage,
+        //     'bathroom' => $request->salleBain,
+        // ])->id;
+            return $request;
+    
+        // $path = $request->file('image')->store('images');
+        // return $path;
+
+        Property::create([
+        'titre' => $request->titre ,
+        'address' => $request->address,
+        'surface' => $request->surface  ,
+        'price' => $request->price ,
+        'type' => $request->type  ,
+        'status' => $request->Status  ,
+        'description' => $request->description  ,
+        // 'image' => $request-> ,
+        'facility_id' => $f_id ,  
+        'user_id' => $request->id
+        ])->id;
     }
 
     /**
@@ -94,7 +85,7 @@ class userController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request[0]  $request[0]
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

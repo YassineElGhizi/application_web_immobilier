@@ -12,7 +12,8 @@ export default class Login extends  React.Component
         this.state = {
             Email : "",
             password : "",
-            role : ""
+            role : "",
+            id : ""
         };
     }
 
@@ -40,7 +41,8 @@ export default class Login extends  React.Component
               })
               .then(function (response) {
                 console.log(response.data);
-                mythis.setState({role : response.data}) 
+                mythis.setState({role : response.data.role , id : response.data.id})
+                 
               })
               .catch(function (error) {
                 alert(error);
@@ -58,6 +60,7 @@ export default class Login extends  React.Component
         }else if (this.state.role === 2)
         {
             this.props.updateAuthorization(this.state.role);
+            this.props.getId(this.state.id);
             return <Redirect to="/publisher" />;
         }
         return(

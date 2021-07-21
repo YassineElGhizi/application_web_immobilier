@@ -9,4 +9,8 @@ class Facility extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['room' , 'garage' , 'bathroom'];
+
 }
+
+

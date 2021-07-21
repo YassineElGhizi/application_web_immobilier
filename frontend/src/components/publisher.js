@@ -120,7 +120,7 @@ export default class Publisher extends React.Component
                                     </a>
                                     </div>
                                 </div>
-                                {this.state.clicked ? <Add /> : <br />}  
+                                {this.state.clicked ? <Add id={this.props.id}/> : <br />}  
                                 </div>
                             </div>
                             </div>
