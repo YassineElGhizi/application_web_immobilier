@@ -3,7 +3,6 @@ import {
     Redirect,
   } from "react-router-dom";
 
-import image10 from '../assets/images/10.jpg';
 import Add from './subComponents/add';
 import axios from 'axios';
 
@@ -14,45 +13,152 @@ export default class Publisher extends React.Component
         this.state = {
             clicked : 0,
             data : [{}],
-            totalpages : ""
+            totalpages : "",
+            neededItems : [],
+            pagginationButtuns : [1,2,3,4,5],
+            currentPage : 1,
+            len : 0
         };
       }
-    
     
     componentDidMount()
     {
         axios.post('http://127.0.0.1:8000/getall' , {
             id : this.props.id
         })
-        // .then(function (response) {
         .then( (response) => {
             console.log(response);
-            this.setState({data : response.data , totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5 })
-            
+            this.setState( prev => {
+                    let tmp = [];
+                    tmp.push(response.data[0])
+                    tmp.push(response.data[1])
+                    return{
+                        data : response.data,
+                        len : response.data.length,
+                        totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                        neededItems : tmp
+                    }
+                }
+            )
         })
         .catch(function (error) {
             alert(error);
         });
     }
 
+    pagination = (i) => {
+        this.setState({currentPage : i})
+        let s = (i*2)-2;
+        let f = (i*2)-1;
+        let tmp = [];
+        if(s < 0){
+            tmp.push(this.state.data[0])
+            tmp.push(this.state.data[1])
+            this.setState( {neededItems : tmp})
+        }else{
+            tmp.push(this.state.data[s])
+            tmp.push(this.state.data[f])
+            this.setState( {neededItems : tmp})
+        }
+        switch (i)
+          {
+            case 1 :
+                this.setState(
+                    {
+                      pagginationButtuns : [1,2,3,4,5] 
+                    });
+                break;
+            case 2 :
+                this.setState(
+                    {
+                      pagginationButtuns : [1,2,3,4,5] 
+                    });
+                break;
+            case 3 :
+                this.setState(
+                    {
+                      pagginationButtuns : [1,2,3,4,5] 
+                    });
+                break;
+            case this.state.totalpages :
+                this.setState(
+                    {
+                      pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages] 
+                    });
+                break;
+            case this.state.totalpages -1 :
+                this.setState(
+                    {
+                      pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
+                    });
+                break;
+            case this.state.totalpages -2 :
+                this.setState(
+                     {
+                      pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
+                    });
+                break;
+            default:
+                this.setState(
+                    {
+                     pagginationButtuns : [this.state.currentPage-2,this.state.currentPage-1,this.state.currentPage,this.state.currentPage+1,this.state.currentPage+2] 
+                   });
+        }
+            
+    } 
+
     toggle = () => 
     {
         this.state.clicked === 0? this.setState({clicked : 1}) : this.setState({clicked : 0})
     }
 
-    nextPage = () =>
-    {
-        console.log('a');
+    nextPage = () => {
+        const mythis = this
+        async function plusplus() {
+            mythis.setState( prev => {
+                let tmp = mythis.state.currentPage;
+                tmp++
+                return{
+                    currentPage :tmp
+                }
+            });
+            return 1;
+          };
+        if(this.state.currentPage != this.state.totalpages )
+        {
+            plusplus().then( () => this.pagination(this.state.currentPage))
+        }
+    }
+
+    previousPage = () => {
+        const mythis = this
+        async function backback() {
+            mythis.setState( prev => {
+                let tmp = mythis.state.currentPage;
+                tmp--
+                return{
+                    currentPage :tmp
+                }
+            });
+            return 1;
+          };
+        if(this.state.currentPage != 1 )
+        {
+            backback().then( () => this.pagination(this.state.currentPage))
+        }
+    }
+
+    update = (e , info) => {
+        e.preventDefault();
+        console.log(info);
     }
 
     render(){
         if (this.props.authorized != 2 )
         {
-            alert("publisher.js :Ur not Authorized");
-            alert(this.props.authorized)
+            alert("Ur not Authorized");
             return <Redirect to="/login" />
         }
-
         return(
             <div>
                     {/*====  End of Section breadcrumb  ====*/}
@@ -64,105 +170,40 @@ export default class Publisher extends React.Component
                             {/*==================================
             =            Section Blog            =
             ===================================*/}
-                             {this.state.data.map( i =>  {
+                             {this.state.neededItems.map( i =>  {
                                     return (
                                 <div className="col-xs-12 col-sm-6 col-md-6 wow fadeInUp delay-07s"> 
                                 <article className="post">
-                                <div className="post-img">
-                                    <img alt="" className="img-responsive" src={i.image} />
-                                    <div className="over-layer">
-                                    <ul className="post-link">
-                                        <li>
-                                        <a className="fa fa-link" href="#" title="#">
-                                        </a>
-                                        </li>
-                                    </ul>
+                                    <div className="post-img">
+                                        <img alt="" className="img-responsive" src={i.image} />
                                     </div>
-                                </div>
-                                <div className="post-content">
-                                    <h3 className="post-title">
-                                    <a href="#" title="#">
-                                        {i.titre}
-                                    </a>
-                                    </h3>
-                                    <p className="post-description">
-                                    {i.description}
-                                    </p>
-                                    <a className="read-more" href="#">
-                                    UPDATE
-                                    </a>
-                                    <br/>
-                                    <br/>
-                                    <a className="read-more" href="#">
-                                    DELETE
-                                    </a>
-                                </div>
+                                    <div className="post-content">
+                                        <h3 className="post-title">
+                                            <a href="" title="#">{i.titre}</a>
+                                        </h3>
+                                        <p className="post-description">{i.description}</p>
+                                        <a className="read-more" href="" onClick={(e) => this.update(e , i)}> UPDATE</a>
+                                        <br/>
+                                        <br/>
+                                        <a className="read-more" href="">DELETE</a>
+                                    </div>
                                 </article>
                             </div>
                                     )
                                 })}
-                            {/* <div className="col-xs-12 col-sm-6 col-md-6 wow fadeInUp delay-07s"> 
-                                <article className="post">
-                                <div className="post-img">
-                                    <img alt="" className="img-responsive" src={image10} />
-                                    <div className="over-layer">
-                                    <ul className="post-link">
-                                        <li>
-                                        <a className="fa fa-link" href="#" title="#">
-                                        </a>
-                                        </li>
-                                    </ul>
-                                    </div>
-                                </div>
-                                <div className="post-content">
-                                    <h3 className="post-title">
-                                    <a href="#" title="#">
-                                        Maison trois etages
-                                    </a>
-                                    </h3>
-                                    <p className="post-description">
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore, assumenda.
-                                    </p>
-                                    <a className="read-more" href="#">
-                                    UPDATE
-                                    </a>
-                                    <br/>
-                                    <br/>
-                                    <a className="read-more" href="#">
-                                    DELETE
-                                    </a>
-                                </div>
-                                </article>
-                            </div> */}
-
                             {/*====  End of Section Blog  ====*/}
                             </div>
                             <div className="text-center">
                             <div className="pagination">
-                                <a href="#">
-                                «
-                                </a>
-                                <a href="#">
-                                1
-                                </a>
-                                <a className="active" href="#">
-                                2
-                                </a>
-                                <a href="#">
-                                3
-                                </a>
-                                <a href="#">
-                                4
-                                </a>
-                                <a href="#">
-                                5
-                                </a>
-                                <a href="#">
-                                6
-                                </a>
-                                <a onClick={this.nextPage}>
-                                »
-                                </a>
+                                <a onClick={this.previousPage}>«</a>
+                                {
+                                    this.state.pagginationButtuns.map( i  => {
+                                        return(
+                                            this.state.currentPage === i ? <a className="active" value={i} onClick= {() => this.pagination(i)}>{i}</a> : <a value={i} onClick= {() => this.pagination(i)}>{i}</a>
+                                        );
+                                    })
+                                }
+                                <a onClick={this.nextPage}>»</a>
                             </div>
                             </div>
                             {/*====  End of Section Pagination  ====*/}
@@ -178,9 +219,7 @@ export default class Publisher extends React.Component
                                 </div>
                                 <div className="sidebar-body wow fadeInUp delay-07s">
                                     <div className="tag">
-                                    <a onClick={this.toggle}>
-                                        CLICK TO ADD
-                                    </a>
+                                    <a onClick={this.toggle}>CLICK TO ADD</a>
                                     </div>
                                 </div>
                                 {this.state.clicked ? <Add id={this.props.id}/> : <br />}  
@@ -191,7 +230,6 @@ export default class Publisher extends React.Component
                         </div>
                     </div>
                     </div>
-
         </div>
         );
     }
