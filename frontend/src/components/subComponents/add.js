@@ -2,6 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import SimpleReactValidator from 'simple-react-validator';
 import { storage } from "./firebaseStorage";
+import ProgressBar from "@ramonak/react-progress-bar";
+import Swal from 'sweetalert2';
+
 
 
 export default class Add extends React.Component
@@ -21,9 +24,10 @@ export default class Add extends React.Component
             garage : "",
             price : "",
             storagePath : "",
+            uploading : 0,
+            progress : 0,
         };
         this.validator = new SimpleReactValidator();
-
       }
 
       change = (e , p) => 
@@ -113,19 +117,20 @@ export default class Add extends React.Component
       click = (e) => 
       {
           e.preventDefault();
-        //   let n = Math.random();
           let n = "";
           n = new Date();
+          this.setState({uploading : 1})
+          this.setState({progress : 20})
           const uploadTask = storage.ref(`houses/${n}`).put(this.state.image).then( (e) => {
             storage.ref(`houses/${n}`).getDownloadURL().then((res) => {
                 console.log(res);
-                // urlsaver = {[arr[i]]: res}
-                // saver[i] = urlsaver;
-                // this.setState({Url: saver, isRetrieved: true})
-            });
-
+                this.setState({storagePath : res})
+                this.setState({progress : 70})
+            }).then( () => sendRequest());
+            this.setState({progress : 99})
+            this.setState({uploading : 0})
+            this.setState({progress : 0})
         })
-
 
           if (this.validator.allValid()) 
           {
@@ -135,13 +140,7 @@ export default class Add extends React.Component
             this.validator.showMessages();
             this.forceUpdate();
           }
-          let scoreCalculator = () =>
-          {
-            let score = 1
-            // this.state.image.endsWith('png', this.state.image.length) ? score += 1 : score += 0;
-              return score
-          }
-          console.log(this.state.image)
+
           let sendRequest = () =>
           {
               axios.post('http://127.0.0.1:8000/add', {
@@ -151,7 +150,7 @@ export default class Add extends React.Component
                   type : this.state.type,
                   Status : this.state.Status,
                   description : this.state.description,
-                  image : this.state.image,
+                  image : this.state.storagePath,
                   chambre : this.state.chambre,
                   salleBain : this.state.salleBain,
                   garage : this.state.garage,
@@ -160,12 +159,15 @@ export default class Add extends React.Component
                 })
                 .then(function (response) {
                   console.log(response);
+                  Swal.fire(  
+                      'DONE!',
+                        'Information Stored',
+                        'success')
                 })
                 .catch(function (error) {
                   alert(error);
                 });
           }
-          scoreCalculator() ===  1 ?sendRequest() : alert('SomeThing Wrong !!')
       }
 
     render(){
@@ -208,7 +210,7 @@ export default class Add extends React.Component
                                     <textarea onChange={(e) => this.change(e , 5)} type="text" className="form-control input-lg" placeholder="Description"/>
                                     <br/>
                                     <label htmlFor="">Image</label>
-                                    <input accept="image/*" onChange={(e) => this.change(e , 6)} type="file" className="form-control input-lg" placeholder="Surface m2"/>
+                                    <input accept="image/png" onChange={(e) => this.change(e , 6)} type="file" className="form-control input-lg" placeholder="Surface m2"/>
                                     <br/>
                                     <label htmlFor="">Facilities</label>
                                     <input onChange={(e) => this.change(e , 7)} type="number" className="form-control input-lg" placeholder="nombre du chambres"/>
@@ -225,6 +227,9 @@ export default class Add extends React.Component
                                     <a onClick={this.click}  className="btn button-sm button-theme" style={{marginLeft: '10vw' , marginTop : '2vw'}}>
                                             Validate
                                     </a>
+                                    <br/>
+                                    <br/>
+                                    { this.state.uploading ? <ProgressBar completed={this.state.progress}/> : <br/> }
             </div>
         );
     }

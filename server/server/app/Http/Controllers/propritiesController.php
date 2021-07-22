@@ -8,43 +8,14 @@ use App\Models\Property;
 
 class propritiesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        // $f_id = Facility::create([
-        //     'room' => $request->chambre,
-        //     'garage' => $request->garage,
-        //     'bathroom' => $request->salleBain,
-        // ])->id;
-            return $request;
-    
-        // $path = $request->file('image')->store('images');
-        // return $path;
+        $f_id = Facility::create([
+            'room' => $request->chambre,
+            'garage' => $request->garage,
+            'bathroom' => $request->salleBain,
+        ])->id;
 
         Property::create([
         'titre' => $request->titre ,
@@ -54,7 +25,7 @@ class propritiesController extends Controller
         'type' => $request->type  ,
         'status' => $request->Status  ,
         'description' => $request->description  ,
-        // 'image' => $request-> ,
+        'image' => $request->image ,
         'facility_id' => $f_id ,  
         'user_id' => $request->id
         ])->id;
@@ -66,9 +37,11 @@ class propritiesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function getall(Request $request)
     {
-        //
+        // return $request->id;
+        return $data =Property::where('user_id' , $request->id)->get()->all();
+        // return 'tnakt';
     }
 
     /**
