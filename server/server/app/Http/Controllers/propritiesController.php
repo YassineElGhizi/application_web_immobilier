@@ -41,7 +41,31 @@ class propritiesController extends Controller
     {
         // return $request->id;
         return $data =Property::where('user_id' , $request->id)->get()->all();
-        // return 'tnakt';
+
+    }
+    public function getone(Request $request)
+    {
+        return $data =Facility::find($request->facility_id);
+    }
+    public function update(Request $request)
+    {
+        // return $request;     
+        Facility::where('id', $request->facility_id)->update([
+            'room' => $request->chambre,
+            'garage' => $request->garage ,
+            'bathroom' => $request->salleBain
+            ]);
+
+        Property::where('id' , $request->propriety_id)->update([
+            'titre' => $request->titre, 
+            'address' => $request->address, 
+            'surface' => $request->surface, 
+            'price' => $request->price,
+            'type' => $request->type,
+            'status' => $request->Status,
+            'description' => $request->description,
+            'image' => $request->image,
+            ]);
     }
 
     /**
@@ -62,10 +86,10 @@ class propritiesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+    // public function update(Request $request, $id)
+    // {
+    //     //
+    // }
 
     /**
      * Remove the specified resource from storage.

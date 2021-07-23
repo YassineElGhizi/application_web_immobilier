@@ -4,6 +4,7 @@ import {
   } from "react-router-dom";
 
 import Add from './subComponents/add';
+import Update from './subComponents/update';
 import axios from 'axios';
 
 export default class Publisher extends React.Component
@@ -16,18 +17,52 @@ export default class Publisher extends React.Component
             totalpages : "",
             neededItems : [],
             pagginationButtuns : [1,2,3,4,5],
-            currentPage : 1,
-            len : 0
+            currentPage : -1,
+            len : 0,
+            needUpdate : 0,
+            needRefrech : 0,
         };
       }
     
+    refresh = () => 
+    {
+        this.setState({needRefrech : this.state.needRefrech +1})
+    }
+
+    componentDidUpdate(previousProps, previousState)
+    {
+        if (previousState.needRefrech !== this.state.needRefrech) {
+
+            axios.post('http://127.0.0.1:8000/getall' , {
+                id : this.props.id
+            })
+            .then( (response) => {
+                this.setState( prev => {
+                        let tmp = [];
+                        tmp.push(response.data[0])
+                        tmp.push(response.data[1])
+                        return{
+                            data : response.data,
+                            len : response.data.length,
+                            totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                            neededItems : tmp
+                        }
+                    }
+                )
+                this.pagination(this.state.currentPage)
+            }).catch(function (error) {
+                alert(error);
+            });    
+        }
+    }
+
     componentDidMount()
     {
+        this.setState({needRefrech : this.state.needRefrech})
         axios.post('http://127.0.0.1:8000/getall' , {
             id : this.props.id
         })
         .then( (response) => {
-            console.log(response);
             this.setState( prev => {
                     let tmp = [];
                     tmp.push(response.data[0])
@@ -46,64 +81,118 @@ export default class Publisher extends React.Component
         });
     }
 
+
     pagination = (i) => {
-        this.setState({currentPage : i})
-        let s = (i*2)-2;
-        let f = (i*2)-1;
-        let tmp = [];
-        if(s < 0){
-            tmp.push(this.state.data[0])
-            tmp.push(this.state.data[1])
-            this.setState( {neededItems : tmp})
-        }else{
-            tmp.push(this.state.data[s])
-            tmp.push(this.state.data[f])
-            this.setState( {neededItems : tmp})
+        const mythis = this;
+        async function forceUpdate()
+        {
+            mythis.setState({currentPage : i})
         }
-        switch (i)
-          {
-            case 1 :
-                this.setState(
-                    {
-                      pagginationButtuns : [1,2,3,4,5] 
-                    });
-                break;
-            case 2 :
-                this.setState(
-                    {
-                      pagginationButtuns : [1,2,3,4,5] 
-                    });
-                break;
-            case 3 :
-                this.setState(
-                    {
-                      pagginationButtuns : [1,2,3,4,5] 
-                    });
-                break;
-            case this.state.totalpages :
-                this.setState(
-                    {
-                      pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages] 
-                    });
-                break;
-            case this.state.totalpages -1 :
-                this.setState(
-                    {
-                      pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
-                    });
-                break;
-            case this.state.totalpages -2 :
-                this.setState(
-                     {
-                      pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
-                    });
-                break;
-            default:
-                this.setState(
-                    {
-                     pagginationButtuns : [this.state.currentPage-2,this.state.currentPage-1,this.state.currentPage,this.state.currentPage+1,this.state.currentPage+2] 
-                   });
+        async function preformLogic()
+        {
+            let s = (i*2)-2;
+            let f = (i*2)-1;
+            let tmp = [];
+            tmp.push(mythis.state.data[s])
+            if(mythis.state.data[f]){tmp.push(mythis.state.data[f])}
+            mythis.setState( {neededItems : tmp})
         }
+        forceUpdate().then( () => preformLogic()).then( () => switcher() )
+        
+        function switcher()
+        {
+            switch (i)
+            {
+              case 1 :
+                  mythis.setState(
+                      {
+                        pagginationButtuns : [1,2,3,4,5] 
+                      });
+                  break;
+              case 2 :
+                  mythis.setState(
+                      {
+                        pagginationButtuns : [1,2,3,4,5] 
+                      });
+                  break;
+              case 3 :
+                  mythis.setState(
+                      {
+                        pagginationButtuns : [1,2,3,4,5] 
+                      });
+                  break;
+              case mythis.state.totalpages :
+                  mythis.setState(
+                      {
+                        pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages] 
+                      });
+                  break;
+              case mythis.state.totalpages -1 :
+                  mythis.setState(
+                      {
+                        pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages ] 
+                      });
+                  break;
+              case mythis.state.totalpages -2 :
+                  mythis.setState(
+                       {
+                        pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages ] 
+                      });
+                  break;
+              default:
+                  mythis.setState(
+                      {
+                       pagginationButtuns : [mythis.state.currentPage-2,mythis.state.currentPage-1,mythis.state.currentPage,mythis.state.currentPage+1,mythis.state.currentPage+2] 
+                     });
+          }
+            
+        }
+        // switch (i)
+        //   {
+        //     case 1 :
+        //         this.setState(
+        //             {
+        //               pagginationButtuns : [1,2,3,4,5] 
+        //             });
+        //         break;
+        //     case 2 :
+        //         this.setState(
+        //             {
+        //               pagginationButtuns : [1,2,3,4,5] 
+        //             });
+        //         break;
+        //     case 3 :
+        //         this.setState(
+        //             {
+        //               pagginationButtuns : [1,2,3,4,5] 
+        //             });
+        //         break;
+        //     case this.state.totalpages :
+        //         this.setState(
+        //             {
+        //               pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages] 
+        //             });
+        //         break;
+        //     case this.state.totalpages -1 :
+        //         this.setState(
+        //             {
+        //               pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
+        //             });
+        //         break;
+        //     case this.state.totalpages -2 :
+        //         this.setState(
+        //              {
+        //               pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
+        //             });
+        //         break;
+        //     default:
+        //             alert("here")
+        //             alert(this.state.currentPage)
+        //         this.setState(
+        //             {
+        //              pagginationButtuns : [this.state.currentPage-2,this.state.currentPage-1,this.state.currentPage,this.state.currentPage+1,this.state.currentPage+2] 
+        //            });
+        // }
             
     } 
 
@@ -150,7 +239,10 @@ export default class Publisher extends React.Component
 
     update = (e , info) => {
         e.preventDefault();
-        console.log(info);
+        localStorage.clear();
+        console.log(info)
+        localStorage.setItem('UpdateTareget',JSON.stringify(info));
+        this.state.needUpdate ? this.setState({needUpdate : 0}) : this.setState({needUpdate : 1})
     }
 
     render(){
@@ -213,20 +305,28 @@ export default class Publisher extends React.Component
                             <div className="panel-body">   
                                 <div className="sidebar-blog wow">
                                 <div className="title">
-                                    <h3>
-                                    ACTIONS
-                                    </h3>
+                                    <h3>ADD PANEL</h3>
                                 </div>
                                 <div className="sidebar-body wow fadeInUp delay-07s">
                                     <div className="tag">
                                     <a onClick={this.toggle}>CLICK TO ADD</a>
                                     </div>
                                 </div>
-                                {this.state.clicked ? <Add id={this.props.id}/> : <br />}  
+                                {this.state.clicked ? <Add id={this.props.id} refresh={this.refresh}/> : <br />}  
+                                </div>
+                            </div>
+                            <div className="panel-body">   
+                                <div className="sidebar-blog wow">
+                                <div className="title">
+                                    <h3>UPDATE PANEL</h3>
+                                </div>
+                                <div className="sidebar-body wow fadeInUp delay-07s"></div>
+                                {this.state.needUpdate ? <Update refresh={this.refresh}/> : <br />}  
                                 </div>
                             </div>
                             </div>
                         </div>
+                        
                         </div>
                     </div>
                     </div>

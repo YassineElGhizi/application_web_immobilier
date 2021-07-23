@@ -143,6 +143,7 @@ export default class Add extends React.Component
 
           let sendRequest = () =>
           {
+              const mythis = this;
               axios.post('http://127.0.0.1:8000/add', {
                   titre : this.state.titre,
                   address : this.state.address,
@@ -163,6 +164,7 @@ export default class Add extends React.Component
                       'DONE!',
                         'Information Stored',
                         'success')
+                   mythis.props.refresh()
                 })
                 .catch(function (error) {
                   alert(error);

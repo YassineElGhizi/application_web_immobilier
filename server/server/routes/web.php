@@ -27,4 +27,6 @@ Route::post('/registerUser', [App\Http\Controllers\UserController::class, 'creat
 Route::post('/loginUser', [App\Http\Controllers\UserController::class, 'login']);
 Route::post('/add', [App\Http\Controllers\propritiesController::class, 'store']);
 Route::post('/getall', [App\Http\Controllers\propritiesController::class, 'getall']);
+Route::post('/getfacilitydetailles', [App\Http\Controllers\propritiesController::class, 'getone']);
+Route::post('/update', [App\Http\Controllers\propritiesController::class, 'update']);
 
