@@ -35,7 +35,7 @@ export default class Update extends React.Component
 
       componentDidMount()
       {
-          const mythis = this;
+        const mythis = this;
         let tmp =  JSON.parse(localStorage.getItem('UpdateTareget'));
         axios.post('http://127.0.0.1:8000/getfacilitydetailles', {facility_id: tmp.facility_id})
         .then(function (response) {

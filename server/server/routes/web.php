@@ -29,4 +29,5 @@ Route::post('/add', [App\Http\Controllers\propritiesController::class, 'store'])
 Route::post('/getall', [App\Http\Controllers\propritiesController::class, 'getall']);
 Route::post('/getfacilitydetailles', [App\Http\Controllers\propritiesController::class, 'getone']);
 Route::post('/update', [App\Http\Controllers\propritiesController::class, 'update']);
+Route::post('/delete', [App\Http\Controllers\propritiesController::class, 'delete']);
 

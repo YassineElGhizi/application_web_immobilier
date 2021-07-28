@@ -31,22 +31,16 @@ class propritiesController extends Controller
         ])->id;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function getall(Request $request)
     {
-        // return $request->id;
         return $data =Property::where('user_id' , $request->id)->get()->all();
-
     }
+
     public function getone(Request $request)
     {
         return $data =Facility::find($request->facility_id);
     }
+
     public function update(Request $request)
     {
         // return $request;     
@@ -68,37 +62,13 @@ class propritiesController extends Controller
             ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function delete(Request $request)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    // public function update(Request $request, $id)
-    // {
-    //     //
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        // return $request->id;
+        // $f_id = Property::where('facility_id' , $request->id)->get();
+        $f_id = (Property::where('facility_id' , $request->id)->get())[0]->id;
+        Facility::find($f_id)->delete();
+        Property::find($request->id)->delete();
+        // return $f_id;
     }
 }

@@ -6,6 +6,7 @@ import {
 import Add from './subComponents/add';
 import Update from './subComponents/update';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default class Publisher extends React.Component
 {
@@ -13,11 +14,11 @@ export default class Publisher extends React.Component
         super(props);
         this.state = {
             clicked : 0,
-            data : [{}],
+            data : [],
             totalpages : "",
             neededItems : [],
-            pagginationButtuns : [1,2,3,4,5],
-            currentPage : -1,
+            pagginationButtuns : [1],
+            currentPage : 1,
             len : 0,
             needUpdate : 0,
             needRefrech : 0,
@@ -32,21 +33,71 @@ export default class Publisher extends React.Component
     componentDidUpdate(previousProps, previousState)
     {
         if (previousState.needRefrech !== this.state.needRefrech) {
-
+            // alert('changing')
             axios.post('http://127.0.0.1:8000/getall' , {
                 id : this.props.id
             })
             .then( (response) => {
                 this.setState( prev => {
                         let tmp = [];
-                        tmp.push(response.data[0])
-                        tmp.push(response.data[1])
-                        return{
-                            data : response.data,
-                            len : response.data.length,
-                            totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
-                            neededItems : tmp
+                        let tmpbuttons = []
+                        for(let i=0;i<response.data.length-1 ;i++)
+                        {
+                            tmpbuttons.push(i+1)
                         }
+                        // if(tmpbuttons.length > 4){ tmpbuttons = [1,2,3,4,5]}
+                        if(tmpbuttons.length < 2){ this.setState({tmpbuttons : [1]})}
+                        else if(tmpbuttons.length >= 2 && tmpbuttons.length < 5)
+                        {
+                            this.setState({ pagginationButtuns : [1,2]});
+                        }
+                        else if(tmpbuttons.length >= 5 && tmpbuttons.length < 7)
+                        {
+                            this.setState({ pagginationButtuns : [1,2,3]});
+                        }
+                        else if(tmpbuttons.length >= 7 && tmpbuttons.length < 9)
+                        {
+                            this.setState({ pagginationButtuns : [1,2,3,4]});
+                        }
+                        else if(tmpbuttons.length >= 9 && tmpbuttons.length < 11)
+                        {
+                            this.setState({ pagginationButtuns : [1,2,4,5]});
+                        }
+
+                        // asdsadas
+
+
+
+                        if(response.data.length > 1)
+                        {
+                            tmp.push(response.data[0])
+                            tmp.push(response.data[1])
+                            return{
+                                data : response.data,
+                                len : response.data.length,
+                                totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                                neededItems : tmp,
+                                pagginationButtuns : tmpbuttons
+                            }
+                        }else if( response.data.length === 1)
+                        {
+                                tmp.push(response.data[0])
+                                return{
+                                    data : response.data,
+                                    len : response.data.length,
+                                    totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                                    neededItems : tmp,
+                                    pagginationButtuns : tmpbuttons
+                                }
+                        }
+                        else
+                        {
+                            return{
+                                neededItems : [],
+                                pagginationButtuns : tmpbuttons
+                            }
+                        }
+
                     }
                 )
                 this.pagination(this.state.currentPage)
@@ -65,13 +116,58 @@ export default class Publisher extends React.Component
         .then( (response) => {
             this.setState( prev => {
                     let tmp = [];
-                    tmp.push(response.data[0])
-                    tmp.push(response.data[1])
-                    return{
-                        data : response.data,
-                        len : response.data.length,
-                        totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
-                        neededItems : tmp
+                    let tmpbuttons = []
+                    for(let i=0;i<response.data.length -1;i++)
+                    {
+                        tmpbuttons.push(i+1)
+                    }
+                    // if(tmpbuttons.length > 4){ tmpbuttons = [1,2,3,4,5]}
+                    if(tmpbuttons.length < 2){ this.setState({tmpbuttons : [1]})}
+                    else if(tmpbuttons.length >= 2 && tmpbuttons.length < 5)
+                    {
+                        this.setState({ pagginationButtuns : [1,2]});
+                    }
+                    else if(tmpbuttons.length >= 5 && tmpbuttons.length < 7)
+                    {
+                        this.setState({ pagginationButtuns : [1,2,3]});
+                    }
+                    else if(tmpbuttons.length >= 7 && tmpbuttons.length < 9)
+                    {
+                        this.setState({ pagginationButtuns : [1,2,3,4]});
+                    }
+                    else if(tmpbuttons.length >= 9 && tmpbuttons.length < 11)
+                    {
+                        this.setState({ pagginationButtuns : [1,2,4,5]});
+                    }
+
+                    // adas
+                    if(response.data.length > 1){
+                        tmp.push(response.data[0])
+                        tmp.push(response.data[1])
+                        return{
+                            data : response.data,
+                            len : response.data.length,
+                            totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                            neededItems : tmp,
+                            pagginationButtuns : tmpbuttons
+                        }
+                    }else if( response.data.length === 1)
+                    {
+                            
+                            tmp.push(response.data[0])
+                            return{
+                                data : response.data,
+                                len : response.data.length,
+                                totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                                neededItems : tmp,
+                                pagginationButtuns : tmpbuttons
+                            }
+                    }
+                    else{
+                        return{
+                            neededItems : [],
+                            pagginationButtuns : tmpbuttons
+                        }
                     }
                 }
             )
@@ -80,7 +176,6 @@ export default class Publisher extends React.Component
             alert(error);
         });
     }
-
 
     pagination = (i) => {
         const mythis = this;
@@ -101,99 +196,72 @@ export default class Publisher extends React.Component
         
         function switcher()
         {
-            switch (i)
+            if(mythis.state.len < 2){mythis.setState({ pagginationButtuns : [1]}); }
+            else if(mythis.state.len >= 2 && mythis.state.len < 5)
             {
-              case 1 :
-                  mythis.setState(
-                      {
-                        pagginationButtuns : [1,2,3,4,5] 
-                      });
-                  break;
-              case 2 :
-                  mythis.setState(
-                      {
-                        pagginationButtuns : [1,2,3,4,5] 
-                      });
-                  break;
-              case 3 :
-                  mythis.setState(
-                      {
-                        pagginationButtuns : [1,2,3,4,5] 
-                      });
-                  break;
-              case mythis.state.totalpages :
-                  mythis.setState(
-                      {
-                        pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages] 
-                      });
-                  break;
-              case mythis.state.totalpages -1 :
-                  mythis.setState(
-                      {
-                        pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages ] 
-                      });
-                  break;
-              case mythis.state.totalpages -2 :
-                  mythis.setState(
-                       {
-                        pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages ] 
-                      });
-                  break;
-              default:
-                  mythis.setState(
-                      {
-                       pagginationButtuns : [mythis.state.currentPage-2,mythis.state.currentPage-1,mythis.state.currentPage,mythis.state.currentPage+1,mythis.state.currentPage+2] 
-                     });
-          }
+                mythis.setState({ pagginationButtuns : [1,2]});
+            }
+            else if(mythis.state.len >= 5 && mythis.state.len < 7)
+            {
+                mythis.setState({ pagginationButtuns : [1,2,3]});
+            }
+            else if(mythis.state.len >= 7 && mythis.state.len < 9)
+            {
+                mythis.setState({ pagginationButtuns : [1,2,3,4]});
+            }
+            else if(mythis.state.len >= 9 && mythis.state.len < 11)
+            {
+                mythis.setState({ pagginationButtuns : [1,2,4,5]});
+            }
+            else
+            {
+                    switch (i)
+                    {
+                    case 1 :
+                        mythis.setState(
+                            {
+                                pagginationButtuns : [1,2,3,4,5] 
+                            });
+                        break;
+                    case 2 :
+                        mythis.setState(
+                            {
+                                pagginationButtuns : [1,2,3,4,5] 
+                            });
+                        break;
+                    case 3 :
+                        mythis.setState(
+                            {
+                                pagginationButtuns : [1,2,3,4,5] 
+                            });
+                        break;
+                    case mythis.state.totalpages :
+                        mythis.setState(
+                            {
+                                pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages] 
+                            });
+                        break;
+                    case mythis.state.totalpages -1 :
+                        mythis.setState(
+                            {
+                                pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages ] 
+                            });
+                        break;
+                    case mythis.state.totalpages -2 :
+                        mythis.setState(
+                            {
+                                pagginationButtuns : [mythis.state.totalpages -4,mythis.state.totalpages -3,mythis.state.totalpages -2,mythis.state.totalpages -1,mythis.state.totalpages ] 
+                            });
+                        break;
+                    default:
+                        mythis.setState(
+                            {
+                            pagginationButtuns : [mythis.state.currentPage-2,mythis.state.currentPage-1,mythis.state.currentPage,mythis.state.currentPage+1,mythis.state.currentPage+2] 
+                            });
+                    } 
+            }
             
-        }
-        // switch (i)
-        //   {
-        //     case 1 :
-        //         this.setState(
-        //             {
-        //               pagginationButtuns : [1,2,3,4,5] 
-        //             });
-        //         break;
-        //     case 2 :
-        //         this.setState(
-        //             {
-        //               pagginationButtuns : [1,2,3,4,5] 
-        //             });
-        //         break;
-        //     case 3 :
-        //         this.setState(
-        //             {
-        //               pagginationButtuns : [1,2,3,4,5] 
-        //             });
-        //         break;
-        //     case this.state.totalpages :
-        //         this.setState(
-        //             {
-        //               pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages] 
-        //             });
-        //         break;
-        //     case this.state.totalpages -1 :
-        //         this.setState(
-        //             {
-        //               pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
-        //             });
-        //         break;
-        //     case this.state.totalpages -2 :
-        //         this.setState(
-        //              {
-        //               pagginationButtuns : [this.state.totalpages -4,this.state.totalpages -3,this.state.totalpages -2,this.state.totalpages -1,this.state.totalpages ] 
-        //             });
-        //         break;
-        //     default:
-        //             alert("here")
-        //             alert(this.state.currentPage)
-        //         this.setState(
-        //             {
-        //              pagginationButtuns : [this.state.currentPage-2,this.state.currentPage-1,this.state.currentPage,this.state.currentPage+1,this.state.currentPage+2] 
-        //            });
-        // }
-            
+        }   
     } 
 
     toggle = () => 
@@ -245,6 +313,117 @@ export default class Publisher extends React.Component
         this.state.needUpdate ? this.setState({needUpdate : 0}) : this.setState({needUpdate : 1})
     }
 
+    delete = (e , target) => {
+        e.preventDefault();
+        const mythis = this;
+        // alert(target.id)
+
+        let forceupdate = async () =>
+        {
+            axios.post('http://127.0.0.1:8000/getall' , {
+                id : this.props.id
+            })
+            .then( (response) => {
+                this.setState( prev => {
+                        let tmp = [];
+                        tmp.push(response.data[0])
+                        tmp.push(response.data[1])
+                        return{
+                            data : response.data,
+                            len : response.data.length,
+                            totalpages : (response.data.length)%2 === 0? (response.data.length)/2: ((response.data.length)/2) + 0.5,
+                            neededItems : tmp
+                        }
+                    }
+                )
+            })
+            .catch(function (error) {
+                alert(error);
+            });
+        }
+
+        let deleteRequest = async () =>
+        {
+            axios.post('http://127.0.0.1:8000/delete' , {
+                id : target.id
+            })
+            .then( (response) => 
+                    {
+                    // console.log(response.data);
+                    console.log(response);
+                    // Swal.fire(  
+                    //     'DONE!',
+                    //     'Information Stored',
+                    //     'success')
+                    }
+                )
+            .catch(function (error) {
+                alert(error);
+            });
+        }
+
+        let updatestates = async() =>
+        {
+            let a = []
+            let newCurrentPage
+            this.state.currentPage >= this.state.len/2? newCurrentPage = Math.trunc(this.state.len/2) : newCurrentPage = this.state.currentPage;
+            a = this.state.data.filter(
+                function(i){
+                    if(i.id != target.id)
+                    {
+                        return i
+                    }
+                })
+
+            this.setState({
+                data : a,
+                currentPage : newCurrentPage,
+                len : a.length,
+            })
+        }
+
+        let predelte = async () =>
+        {
+            let newNeededItems
+            if(this.state.data.length >= 2)
+            {
+                newNeededItems = this.state.data.slice(-2)
+            }else if(this.state.data.length == 1)
+            {
+                newNeededItems = this.state.data.slice(-2)
+            }else
+            {
+                newNeededItems = []
+            }
+            this.setState({neededItems : newNeededItems})
+            if(this.state.len < 2 && this.state.len >= 1)
+            {
+                this.setState({ pagginationButtuns : [1]}); 
+            }
+            else if(this.state.len >= 2 && this.state.len < 5)
+            {
+                this.setState({ pagginationButtuns : [1,2]});
+            }
+            else if(this.state.len >= 5 && this.state.len < 7)
+            {
+                this.setState({ pagginationButtuns : [1,2,3]});
+            }
+            else if(this.state.len >= 7 && this.state.len < 9)
+            {
+                this.setState({ pagginationButtuns : [1,2,3,4]});
+            }
+            else if(this.state.len >= 9 && this.state.len < 11)
+            {
+                this.setState({ pagginationButtuns : [1,2,4,5]});
+            }else{ this.setState({pagginationButtuns : []})}
+        }
+
+        
+        deleteRequest().then((res) => {
+            updatestates().then((res) => {
+                predelte()})})
+    
+    }
     render(){
         if (this.props.authorized != 2 )
         {
@@ -262,9 +441,10 @@ export default class Publisher extends React.Component
                             {/*==================================
             =            Section Blog            =
             ===================================*/}
+                            
                              {this.state.neededItems.map( i =>  {
                                     return (
-                                <div className="col-xs-12 col-sm-6 col-md-6 wow fadeInUp delay-07s"> 
+                                <div key={i.id} className="col-xs-12 col-sm-6 col-md-6 wow fadeInUp delay-07s"> 
                                 <article className="post">
                                     <div className="post-img">
                                         <img alt="" className="img-responsive" src={i.image} />
@@ -277,25 +457,26 @@ export default class Publisher extends React.Component
                                         <a className="read-more" href="" onClick={(e) => this.update(e , i)}> UPDATE</a>
                                         <br/>
                                         <br/>
-                                        <a className="read-more" href="">DELETE</a>
+                                        <a className="read-more" style={{cursor: 'pointer'}}  onClick={(e) => this.delete(e , i)}>DELETE</a>
                                     </div>
                                 </article>
                             </div>
                                     )
                                 })}
+
                             {/*====  End of Section Blog  ====*/}
                             </div>
                             <div className="text-center">
                             <div className="pagination">
-                                <a onClick={this.previousPage}>«</a>
+                                <a style={{cursor: 'pointer'}} onClick={this.previousPage}>«</a>
                                 {
                                     this.state.pagginationButtuns.map( i  => {
                                         return(
-                                            this.state.currentPage === i ? <a className="active" value={i} onClick= {() => this.pagination(i)}>{i}</a> : <a value={i} onClick= {() => this.pagination(i)}>{i}</a>
+                                            this.state.currentPage === i ? <a style={{cursor: 'pointer'}} className="active" value={i} onClick= {() => this.pagination(i)}>{i}</a> : <a style={{cursor: 'pointer'}} value={i} onClick= {() => this.pagination(i)}>{i}</a>
                                         );
                                     })
                                 }
-                                <a onClick={this.nextPage}>»</a>
+                                <a onClick={this.nextPage} style={{cursor: 'pointer'}}>»</a>
                             </div>
                             </div>
                             {/*====  End of Section Pagination  ====*/}
@@ -326,7 +507,6 @@ export default class Publisher extends React.Component
                             </div>
                             </div>
                         </div>
-                        
                         </div>
                     </div>
                     </div>
