@@ -87,12 +87,12 @@ export default class Navbar extends React.Component
             <div className="collapse navbar-collapse" id="navbar-menu">
               <ul className="nav navbar-nav navbar-left" data-in="fadeInDown" data-out="fadeOutUp">
                 <li>
-                  <a href="about-us.html">
+                  <a href="/">
                     Home
                   </a>
                 </li>
                 <li>
-                  <a href="about-us.html">
+                  <a href="">
                   À propos de nous
                   </a>
                 </li>
@@ -102,7 +102,7 @@ export default class Navbar extends React.Component
                   </Link>
                 </li>
                 <li>
-                  <Link  href="contact-us.html">
+                  <Link  href="#">
                     Contacter nous
                   </Link >
                 </li>

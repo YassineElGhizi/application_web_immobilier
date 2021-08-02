@@ -38,9 +38,14 @@ export default class App extends React.Component{
     this.state = {
         authorized : 0,
         id:"",
-        hidden : true
+        hidden : true,
+        SearchReasults : []
     };
   }
+
+    search = (data) => {
+      this.setState({SearchReasults : data})
+    }
 
     updateAuthorization = (n) => 
     {
@@ -68,7 +73,7 @@ export default class App extends React.Component{
             <Route path="/" exact>  
               <Slider/>
               <Card />
-              {this.state.hidden ? '' : <Search />}
+              {this.state.hidden ? '' : <Search search={this.search} data={this.state.SearchReasults} />}
               <Feature />
               <br/>
               <br/>
@@ -93,12 +98,10 @@ export default class App extends React.Component{
               <Publisher authorized={this.state.authorized} id={this.state.id}/>
             </Route>
             <Route path="/result" exact>
-              <Result />
+              <Result data={this.state.SearchReasults}/>
             </Route>
         </Switch>
-        {/* <div style={{position: 'fixed' , bottom : '0' , width : '100%'}}> */}
           <Footer/>
-        {/* </div> */}
       </div>
     </Router>
   );

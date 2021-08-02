@@ -4,8 +4,8 @@ import {
     Redirect,
   } from "react-router-dom";
 
-export default class Search extends React.Component{
-
+export default class Search extends React.Component
+{
     constructor(props) {
         super(props);
         this.state = {
@@ -34,6 +34,8 @@ export default class Search extends React.Component{
           })
           .then(function (response) {
             console.log(response.data);
+            // mythis.setState({data : response.data})
+            mythis.props.search(response.data)
             mythis.setState({response : true})
           })
           .catch(function (error) {
@@ -99,6 +101,7 @@ export default class Search extends React.Component{
     render(){
         if(this.state.response) 
         {
+
             return <Redirect to="/result" />;
         }
 
