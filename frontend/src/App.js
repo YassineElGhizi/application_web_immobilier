@@ -21,8 +21,7 @@ import Login from './components/login';
 import Register from './components/register';
 import Admin from './components/admin';
 import Publisher from './components/publisher';
-
-import axios from 'axios';
+import Result from './components/result'
 
 import React from 'react';
 
@@ -38,7 +37,8 @@ export default class App extends React.Component{
     super(props);
     this.state = {
         authorized : 0,
-        id:""
+        id:"",
+        hidden : true
     };
   }
 
@@ -52,6 +52,13 @@ export default class App extends React.Component{
       this.setState({id : id});
     }
 
+    componentDidMount()
+    {
+      setTimeout(() => {
+        this.setState({hidden: false});
+      }, 1000);
+    }
+
   render(){
   return (
     <Router>
@@ -61,7 +68,7 @@ export default class App extends React.Component{
             <Route path="/" exact>  
               <Slider/>
               <Card />
-              <Search />
+              {this.state.hidden ? '' : <Search />}
               <Feature />
               <br/>
               <br/>
@@ -85,8 +92,13 @@ export default class App extends React.Component{
             <Route path="/publisher" exact>
               <Publisher authorized={this.state.authorized} id={this.state.id}/>
             </Route>
+            <Route path="/result" exact>
+              <Result />
+            </Route>
         </Switch>
-        <Footer/>
+        {/* <div style={{position: 'fixed' , bottom : '0' , width : '100%'}}> */}
+          <Footer/>
+        {/* </div> */}
       </div>
     </Router>
   );

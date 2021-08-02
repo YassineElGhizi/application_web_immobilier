@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Facility;
 use App\Models\Property;
+use DB;
 
 class propritiesController extends Controller
 {
@@ -64,11 +65,43 @@ class propritiesController extends Controller
 
     public function delete(Request $request)
     {
-        // return $request->id;
-        // $f_id = Property::where('facility_id' , $request->id)->get();
         $f_id = (Property::where('facility_id' , $request->id)->get())[0]->id;
         Facility::find($f_id)->delete();
         Property::find($request->id)->delete();
-        // return $f_id;
     }
+    public function search(Request $request)
+    {
+
+        $p = Property::get();
+        $propArrayId = [];
+        if($request->keyword != '')
+        {
+            foreach($p as $a){
+                if (str_contains($a->address, $request->keyword)) {
+                    array_push($propArrayId, $a->id);
+                }
+            }
+        }
+        $res = DB::select('
+                    select p.id from properties p, facilities f
+                    where p.facility_id = f.id
+                    and status = ?
+                    and room = ?
+                    and bathroom = ?
+                    and price BETWEEN ? and ?' , [$request->status , $request->chambre , $request->saleBains ,$request->min , $request->max ]
+                );
+        foreach($res as $b){
+            array_push($propArrayId, $b->id);
+        }
+        $finalRes = [];
+        foreach($propArrayId as $fres)
+        {
+            array_push($finalRes, Property::where('id' , $fres)->get());
+        }
+        // return response()->json($finalRes);
+        return $finalRes;
+    }
+    
+
 }
+

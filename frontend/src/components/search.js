@@ -1,4 +1,8 @@
 import React from 'react';
+import axios from 'axios';
+import {
+    Redirect,
+  } from "react-router-dom";
 
 export default class Search extends React.Component{
 
@@ -6,18 +10,35 @@ export default class Search extends React.Component{
         super(props);
         this.state = {
             keyword : "",
-            secteur : "",
-            type_pro : "",
-            status: "",
-            chambre : "",
-            saleBains : "",
+            type_pro : "0",
+            status: "0",
+            chambre : "0",
+            saleBains : "0",
             min : "",
             max: "",
+            response : false,
         };
     }
 
     click = () => {
-        console.log(this.state);
+        // console.log(this.state);
+        const mythis = this;
+        axios.post('http://127.0.0.1:8000/search', {
+            keyword : this.state.keyword,
+            type_pro : this.state.type_pro,
+            status: this.state.status,
+            chambre : this.state.chambre,
+            saleBains : this.state.saleBains,
+            min : this.state.min,
+            max: this.state.max,
+          })
+          .then(function (response) {
+            console.log(response.data);
+            mythis.setState({response : true})
+          })
+          .catch(function (error) {
+            alert(error);
+          });
     }
 
     change = (e , p) => 
@@ -28,13 +49,6 @@ export default class Search extends React.Component{
                 this.setState(
                     {
                         keyword : e.target.value 
-                    }
-                    );
-                break; 
-            case 1 :
-                this.setState(
-                    {
-                        secteur : e.target.value 
                     }
                     );
                 break; 
@@ -79,12 +93,15 @@ export default class Search extends React.Component{
                         max : e.target.value 
                     }
                     );
-                break;   
-        }
-
+                break;   }
     }
 
     render(){
+        if(this.state.response) 
+        {
+            return <Redirect to="/result" />;
+        }
+
         return(
             <div>
                 <div className="wrap-form-property">
@@ -109,36 +126,17 @@ export default class Search extends React.Component{
                             <div className="col-xs-12 col-sm-12 col-md-3">
                                 <div className="form-group mt15">
                                 {/* single dropdown */}
-                                <select onChange={(e) => this.change(e , 1)} className="form-control chosen-select" data-placeholder="Choose a Country...">
-                                    <option value="NONE">
-                                    Sélectionnez le Secteur
-                                    </option>
-                                    <option value="AC">
-                                    Ascension Island
-                                    </option>
-                                    <option value="AD">
-                                    Andorra
-                                    </option>
-                                </select>
-                                </div>
-                            </div>
-                            <div className="col-xs-12 col-sm-12 col-md-3">
-                                <div className="form-group mt15">
-                                {/* single dropdown */}
                                 <select onChange={(e) => this.change(e , 2)} className="form-control chosen-select" data-placeholder="property type" id="property-type">
-                                    <option value="#">
-                                    Type de propriété
-                                    </option>
-                                    <option value="Appartment">
+                                    <option value="0">
                                     Appartment
                                     </option>
-                                    <option value="Houses">
+                                    <option value="1">
                                     Maisons
                                     </option>
-                                    <option value="Commercial">
+                                    <option value="2">
                                     Commerciale
                                     </option>
-                                    <option value="Garage">
+                                    <option value="3">
                                     Garage
                                     </option>
                                 </select>
@@ -148,13 +146,10 @@ export default class Search extends React.Component{
                                 <div className="form-group mt15">
                                 {/* single dropdown */}
                                 <select onChange={(e) => this.change(e , 3)} className="form-control chosen-select" data-placeholder="Property Status" id="property-status">
-                                    <option value="#">
-                                    Statut de la propriété
-                                    </option>
-                                    <option value="sell">
+                                    <option value="0">
                                     à Vendre
                                     </option>
-                                    <option value="rent">
+                                    <option value="1">
                                     à Louer
                                     </option>
                                 </select>
@@ -165,16 +160,11 @@ export default class Search extends React.Component{
                             <div className="col-xs-12 col-sm-12 col-md-2">
                                 <div className="form-group mt15">
                                 {/* single dropdown */}
+                                <label htmlFor="">Chambres</label>
                                 <select onChange={(e) => this.change(e , 4)} className="chosen-select form-control" data-placeholder="Bed Room" id="bedroom">
-                                    <option value="#">
-                                    Chambre
-                                    </option>
-                                    <option value={1}>
-                                    1
-                                    </option>
-                                    <option value={2}>
-                                    2
-                                    </option>
+                                    <option value={0}>0</option>
+                                    <option value={1}>1</option>
+                                    <option value={2}>2</option>
                                     <option value={3}>
                                     3
                                     </option>
@@ -190,9 +180,10 @@ export default class Search extends React.Component{
                             <div className="col-xs-12 col-sm-12 col-md-2">
                                 <div className="form-group mt15">
                                 {/* single dropdown */}
+                                <label htmlFor="">Salle de bains</label>
                                 <select onChange={(e) => this.change(e , 5)} className="form-control chosen-select" data-placeholder="Bath Room" id="bathroom">
-                                    <option value="#">
-                                    Salle de bains
+                                    <option value={0}>
+                                    0
                                     </option>
                                     <option value={1}>
                                     1
@@ -213,7 +204,7 @@ export default class Search extends React.Component{
                                 </div>
                             </div>
                             <div className="col-xs-12 col-sm-12 col-md-3">
-                                <div className="form-group mt15" style={{flexDirection: 'row' , display: 'flex'}}>
+                                <div className="form-group mt15" style={{flexDirection: 'row' , display: 'flex' , marginTop : '15%'}}>
                                     <label style={{marginRight: '5%'}}>
                                     Prix:
                                     </label>

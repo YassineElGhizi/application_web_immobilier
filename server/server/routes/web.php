@@ -30,4 +30,5 @@ Route::post('/getall', [App\Http\Controllers\propritiesController::class, 'getal
 Route::post('/getfacilitydetailles', [App\Http\Controllers\propritiesController::class, 'getone']);
 Route::post('/update', [App\Http\Controllers\propritiesController::class, 'update']);
 Route::post('/delete', [App\Http\Controllers\propritiesController::class, 'delete']);
+Route::post('/search', [App\Http\Controllers\propritiesController::class, 'search']);
 
