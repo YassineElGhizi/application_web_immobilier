@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Facility;
 use App\Models\Property;
+use App\Models\User;
 use DB;
 
 class propritiesController extends Controller
@@ -98,7 +99,6 @@ class propritiesController extends Controller
         {
             array_push($finalRes, Property::where('id' , $fres)->get());
         }
-        // return response()->json($finalRes);
         return $finalRes;
     }
     
