@@ -6,6 +6,7 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import './result.css';
 
 import More from './subComponents/more';
+import axios from 'axios';
 
 export default class Result extends React.Component
 {
@@ -40,7 +41,8 @@ export default class Result extends React.Component
             ],
             clickedForMore : false,
             tel : "",
-            name : ""
+            name : "",
+            image : ""
         };
     }
 
@@ -69,15 +71,34 @@ export default class Result extends React.Component
     
     click = (e) => 
     {
-        this.state.clickedForMore ? this.setState({clickedForMore : false}) : this.setState({clickedForMore : true})
-        console.log(e.id);
+        const mythis = this;
+        this.setState({clickedForMore : true})
+        console.log(e.user_id);
+        axios.post('http://127.0.0.1:8000/getUserTel', {
+            id : e.user_id,
+          })
+          .then(function (response) {
+            console.log(response.data);
+            mythis.setState({
+                tel : response.data.tel,
+                name : response.data.name,
+                image : e.image
+            })
+          })
+          .catch(function (error) {
+            alert(error);
+          });
     }
 
     render(){  
-        console.log(this.props.data[0]);
         return(
             <div>
-                {this.state.clickedForMore ? <More /> : <div></div>}
+                {this.state.clickedForMore ? <More 
+                                                tel={this.state.tel} 
+                                                name={this.state.name}
+                                                image = {this.state.image}
+                                                /> 
+                                            : <div></div>}
 
                 <div style={{width: '75%' , marginLeft : '10%' , marginTop : '2vw'}}>
                     <DataTableExtensions

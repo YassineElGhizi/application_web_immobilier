@@ -40,10 +40,7 @@ export default class Login extends  React.Component
                 password : this.state.password,
               })
               .then(function (response) {
-                // console.log(response.data);
-                // alert(response.data);
-                mythis.setState({role : response.data.role , id : response.data.id})
-                 
+                mythis.setState({role : response.data.role , id : response.data.id})                 
               })
               .catch(function (error) {
                 alert(error);

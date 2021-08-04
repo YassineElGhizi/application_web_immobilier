@@ -45,9 +45,7 @@ class userController extends Controller
         $pass = DB::select('select password from users where id = ?',[$id[0]->id]);
         if( Hash::check($request->password, $pass[0]->password) )
         {
-            // return 1;
             $roles = User::select('role_id')->where('id' , $id[0]->id)->get();
-            // return $roles[0]->role_id;
             return response()->json([
                 'role' => $roles[0]->role_id,
                 'id' => $id[0]->id,
@@ -57,60 +55,9 @@ class userController extends Controller
         }
 
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function search(Request $request)
     {
-        //
+        return User::select('name' , 'tel')->where('id' , $request->id)->get()[0];
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request[0]  $request[0]
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

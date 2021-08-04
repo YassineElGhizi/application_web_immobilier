@@ -6,7 +6,6 @@ import {
 import Add from './subComponents/add';
 import Update from './subComponents/update';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 export default class Publisher extends React.Component
 {
